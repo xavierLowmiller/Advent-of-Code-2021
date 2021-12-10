@@ -2,10 +2,53 @@ import XCTest
 @testable import Day10
 
 final class Day10Tests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        XCTAssertEqual(Day10().text, "Hello, World!")
+    func testDay10Part1Example() throws {
+        let input = """
+        [({(<(())[]>[[{[]{<()<>>
+        [(()[<>])]({[<{<<[]>>(
+        {([(<{}[<>[]}>{[]{[(<()>
+        (((({<>}<{<{<>}{[]{[]{}
+        [[<[([]))<([[{}[[()]]]
+        [{[{({}]{}}([{[{{{}}([]
+        {<[[]]>}<{[{[{[]{()[[[]
+        [<(<(<(<{}))><([]([]()
+        <{([([[(<>()){}]>(<<{{
+        <{([{{}}[<[[[<>{}]]]>[]]
+        """.split(separator: "\n")
+
+        let checker = SyntaxChecker(lines: input)
+
+        XCTAssertEqual(checker.totalSyntaxErrorScore, 26397)
+    }
+
+    func testDay10Part1() throws {
+        let checker = SyntaxChecker(lines: input)
+
+        print("Day 10 Part 1:", checker.totalSyntaxErrorScore)
+    }
+
+    func testDay10Part2Example() throws {
+        let input = """
+        [({(<(())[]>[[{[]{<()<>>
+        [(()[<>])]({[<{<<[]>>(
+        {([(<{}[<>[]}>{[]{[(<()>
+        (((({<>}<{<{<>}{[]{[]{}
+        [[<[([]))<([[{}[[()]]]
+        [{[{({}]{}}([{[{{{}}([]
+        {<[[]]>}<{[{[{[]{()[[[]
+        [<(<(<(<{}))><([]([]()
+        <{([([[(<>()){}]>(<<{{
+        <{([{{}}[<[[[<>{}]]]>[]]
+        """.split(separator: "\n")
+
+        let checker = SyntaxChecker(lines: input)
+
+        XCTAssertEqual(checker.completionScore, 288957)
+    }
+
+    func testDay10Part2() throws {
+        let checker = SyntaxChecker(lines: input)
+
+        print("Day 10 Part 2:", checker.completionScore)
     }
 }
