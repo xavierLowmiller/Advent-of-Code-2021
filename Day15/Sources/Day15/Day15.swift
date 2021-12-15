@@ -31,66 +31,12 @@ struct CaveSystem {
         let start = Point(x: 0, y: 0)
         let end = Point(x: cave.keys.map(\.x).max()!, y: cave.keys.map(\.y).max()!)
 
-        return aStar(start: start, goal: end) { $0.distance(to: end) }.reduce(0) { $0 + cave[$1]! } - cave[start]!
-    }
-
-    func reconstructPath(cameFrom: [Point: Point], current: Point) -> [Point] {
-        var current = current
-        var totalPath = [current]
-        while let value = cameFrom[current] {
-            current = value
-            totalPath.append(value)
-        }
-        return totalPath.reversed()
-    }
-
-    // A* finds a path from start to goal.
-    // h is the heuristic function. h(n) estimates the cost to reach goal from node n.
-    func aStar(start: Point, goal: Point, h: (Point) -> Int) -> [Point] {
-
-        // The set of discovered nodes that may need to be (re-)expanded.
-        // Initially, only the start node is known.
-        // This is usually implemented as a min-heap or priority queue rather than a hash-set.
-        var openSet: Set<Point> = [start]
-
-        // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
-        // to n currently known.
-        var cameFrom: [Point: Point] = [:]
-
-        // For node n, gScore[n] is the cost of the cheapest path from start to n currently known.
-        var gScore: [Point: Int] = [start: 0]
-
-        // For node n, fScore[n] := gScore[n] + h(n). fScore[n] represents our current best guess as to
-        // how short a path from start to finish can be if it goes through n.
-        var fScore: [Point: Int] = [start: h(start)]
-
-        while !openSet.isEmpty {
-            // This operation can occur in O(1) time if openSet is a min-heap or a priority queue
-            let current = openSet.min { fScore[$0]! < fScore[$1]! }!
-            if current == goal {
-                return reconstructPath(cameFrom: cameFrom, current: current)
-            }
-
-            openSet.remove(current)
-            for neighbor in neighbors(of: current) {
-                // d(current,neighbor) is the weight of the edge from current to neighbor
-                // tentative_gScore is the distance from start to the neighbor through current
-                let tentativeGScore = gScore[current]! + cave[neighbor]!
-                let existing = gScore[neighbor, default: .max]
-                if tentativeGScore < existing {
-                    // This path to neighbor is better than any previous one. Record it!
-                    cameFrom[neighbor] = current
-                    gScore[neighbor] = tentativeGScore
-                    fScore[neighbor] = tentativeGScore + h(neighbor)
-                    if !openSet.contains(neighbor) {
-                        openSet.insert(neighbor)
-                    }
-                }
-            }
-        }
-
-        // Open set is empty but goal was never reached
-        fatalError()
+        return aStar(
+            start: start,
+            goal: end,
+            cost: { cave[$1]! }, heuristic: { $0.distance(to: end) },
+            neighbors: { neighbors(of: $0) }
+        )!.reduce(0) { $0 + cave[$1]! } - cave[start]!
     }
 
     private func neighbors(of point: Point) -> [Point] {
